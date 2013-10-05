@@ -1,0 +1,62 @@
+
+<form id="getJSONForm">
+Zip Code: <input type="text" id="zip"/>
+Radius: <input type="text" id="radius"/>
+Wholesale: <input type="checkbox" id="wholesale"/>
+Retail: <input type="checkbox" id="retail"/>
+<input type="submit" value="lookup"/>
+</form> 
+
+<div id="DTContainer"></div>
+
+<script>
+$(document).ready(function(){
+    var jsonURL = "https://tapco.secure.force.com/DistributorLocator/services/apexrest/findnearby/get?callback=?";
+    var data = 
+    {
+        "aaData": [
+        ],
+        "aoColumns": [
+            { "sTitle": "Distributor" },
+            { "sTitle": "Street" },
+            { "sTitle": "City" },
+            { "sTitle": "State" },
+            { "sTitle": "Zip" },
+            { "sTitle": "Phone" },
+            { "sTitle": "Website" },
+            { "sTitle": "Map" },
+            { "sTitle": "Distance" }
+        ]
+    };
+
+    $("#getJSONForm").submit(function(){  
+        var zip = $("#zip").val();  
+        var radius = $("#radius").val();  
+        var wholesale = $("#wholesale").is(':checked'); 
+        var retail = $("#retail").is(':checked');  
+
+        $.getJSON(
+            jsonURL,
+            {zip: zip, radius: radius, retail: retail, wholesale: wholesale},              
+            function(result){
+                $("#DTContainer").html("<table class='display' id='ResultsTable'/>");
+                data.aaData = [];
+               $.each(result, function(i, distributor){
+                            var row = [distributor.Name, distributor.Street, distributor.City, distributor.State, distributor.Zip, distributor.Phone, distributor.Website, GetLink(distributor), distributor.Distance];
+                            data.aaData.push(row);
+                    });
+               $('#ResultsTable').dataTable(data);
+            });
+        return false;
+    });
+});
+
+function GetLink(distributor)
+{
+    var url = '<a href="http://maps.google.com/?q=';
+    url = url + distributor.Street +  ' ' + distributor.City + ' ' + distributor.State + ' ' + distributor.Zip;
+    url = url + '">Map</a>';
+    return url;
+}
+
+</script>
