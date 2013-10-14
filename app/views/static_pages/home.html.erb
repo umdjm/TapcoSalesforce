@@ -34,10 +34,11 @@ $(document).ready(function(){
         var radius = $("#radius").val();  
         var wholesale = $("#wholesale").is(':checked'); 
         var retail = $("#retail").is(':checked');  
+        var brand = "";
 
         $.getJSON(
             jsonURL,
-            {zip: zip, radius: radius, retail: retail, wholesale: wholesale},              
+            {zip: zip, radius: radius, retail: retail, wholesale: wholesale, brand : brand},              
             function(result){
                 $("#DTContainer").html("<table class='display' id='ResultsTable'/>");
                 data.aaData = [];
